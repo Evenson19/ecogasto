@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'vistas/pantalla_dashboard.dart';
 import 'vistas/pantalla_transacciones.dart';
+import 'vistas/pantalla_estadisticas.dart';
 import 'vistas/pantalla_presupuestos.dart';
 import 'vistas/pantalla_categorias.dart';
 import 'vistas/pantalla_agregar_transaccion.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,14 +23,15 @@ class AplicacionEcoGasto extends StatelessWidget {
     return MaterialApp(
       title: 'EcoGasto',
       debugShowCheckedModeBanner: false,
+      // Localización para que el DatePicker aparezca en español
       localizationsDelegates: const [
-  GlobalMaterialLocalizations.delegate,
-  GlobalWidgetsLocalizations.delegate,
-  GlobalCupertinoLocalizations.delegate,
-],
-supportedLocales: const [
-  Locale('es'),
-],
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('es'),
+      ],
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
@@ -71,6 +72,7 @@ class _EstadoPantallaNavegacionPrincipal
   final List<Widget> _pantallas = const [
     PantallaDashboard(),
     PantallaTransacciones(),
+    PantallaEstadisticas(),
     PantallaPresupuestos(),
     PantallaCategorias(),
   ];
@@ -98,6 +100,11 @@ class _EstadoPantallaNavegacionPrincipal
             icon: Icon(Icons.list_outlined),
             selectedIcon: Icon(Icons.list),
             label: 'Movimientos',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.bar_chart_outlined),
+            selectedIcon: Icon(Icons.bar_chart),
+            label: 'Estadísticas',
           ),
           NavigationDestination(
             icon: Icon(Icons.pie_chart_outline),
