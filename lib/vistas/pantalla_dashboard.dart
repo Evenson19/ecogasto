@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../controladores/controlador_transacciones.dart';
 import '../modelos/modelos.dart';
 import '../utilidades/formateador.dart';
+import '../servicios/servicio_exportacion_pdf.dart';
+import '../servicios/servicio_seguridad.dart';
 import 'pantalla_agregar_transaccion.dart';
 
 class PantallaDashboard extends StatefulWidget {
@@ -52,6 +54,16 @@ class _EstadoPantallaDashboard extends State<PantallaDashboard> {
       appBar: AppBar(
         title: const Text('EcoGasto'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.picture_as_pdf_outlined),
+            onPressed: _exportarPdf,
+            tooltip: 'Exportar PDF',
+          ),
+          IconButton(
+            icon: const Icon(Icons.security_outlined),
+            onPressed: _abrirSeguridad,
+            tooltip: 'Seguridad',
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _cargarDatos,
@@ -302,6 +314,34 @@ class _EstadoPantallaDashboard extends State<PantallaDashboard> {
   }
 
   // ── Navegación de meses ────────────────────────────────────
+
+  Future<void> _exportarPdf() async {
+    if (_resumen == null) return;
+    try {
+      await ServicioExportacionPdf.exportarReporteMensual(
+        mes: _mesActual,
+        anio: _anioActual,
+        transacciones: _transaccionesRecientes,
+        totalIngresos: _resumen!.ingresos,
+        totalGastos: _resumen!.gastos,
+        saldo: _resumen!.saldo,
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al generar PDF: $e')),
+        );
+      }
+    }
+  }
+
+  void _abrirSeguridad() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const PantallaConfigurarPin(),
+      ),
+    );
+  }
 
   void _meAnterior() {
     setState(() {

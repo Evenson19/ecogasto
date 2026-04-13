@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+import 'servicios/servicio_seguridad.dart';
 import 'vistas/pantalla_dashboard.dart';
 import 'vistas/pantalla_transacciones.dart';
 import 'vistas/pantalla_estadisticas.dart';
@@ -23,15 +24,12 @@ class AplicacionEcoGasto extends StatelessWidget {
     return MaterialApp(
       title: 'EcoGasto',
       debugShowCheckedModeBanner: false,
-      // Localización para que el DatePicker aparezca en español
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('es'),
-      ],
+      supportedLocales: const [Locale('es')],
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
@@ -43,16 +41,61 @@ class AplicacionEcoGasto extends StatelessWidget {
         cardTheme: CardThemeData(
           elevation: 2,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
+              borderRadius: BorderRadius.circular(16)),
         ),
         inputDecorationTheme: InputDecorationTheme(
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          border:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           filled: true,
         ),
       ),
-      home: const PantallaNavegacionPrincipal(),
+      home: const PantallaInicio(),
     );
+  }
+}
+
+/// Pantalla inicial que verifica si se debe mostrar el bloqueo por PIN
+class PantallaInicio extends StatefulWidget {
+  const PantallaInicio({super.key});
+
+  @override
+  State<PantallaInicio> createState() => _EstadoPantallaInicio();
+}
+
+class _EstadoPantallaInicio extends State<PantallaInicio> {
+  bool _verificando = true;
+  bool _requierePin = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _verificarBloqueo();
+  }
+
+  Future<void> _verificarBloqueo() async {
+    final pinActivado = await ServicioSeguridad.estaActivado();
+    setState(() {
+      _requierePin = pinActivado;
+      _verificando = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_verificando) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_requierePin) {
+      return PantallaBloqueo(
+        alDesbloquear: () =>
+            setState(() => _requierePin = false),
+      );
+    }
+
+    return const PantallaNavegacionPrincipal();
   }
 }
 
@@ -88,8 +131,8 @@ class _EstadoPantallaNavegacionPrincipal
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _indiceActual,
-        onDestinationSelected: (indice) =>
-            setState(() => _indiceActual = indice),
+        onDestinationSelected: (i) =>
+            setState(() => _indiceActual = i),
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
@@ -118,12 +161,15 @@ class _EstadoPantallaNavegacionPrincipal
           ),
         ],
       ),
-      // Botón flotante para agregar transacción desde cualquier pantalla
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _abrirFormularioTransaccion(context),
-        backgroundColor: colores.primary,
-        foregroundColor: colores.onPrimary,
-        child: const Icon(Icons.add),
+      floatingActionButton: Container(
+        width: 35,
+        height: 35,
+        child: FloatingActionButton(
+          onPressed: () => _abrirFormularioTransaccion(context),
+          backgroundColor: colores.primary,
+          foregroundColor: colores.onPrimary,
+          child: const Icon(Icons.add, size: 25,),
+        ),
       ),
     );
   }

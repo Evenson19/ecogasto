@@ -20,6 +20,9 @@ dependencies:
   # Internacionalización y formato de moneda/fecha
   intl: ^0.20.2
 
+   # Guardar PIN de forma persistente
+  shared_preferences: ^2.2.3
+  
   # Localization
   flutter_localizations:
     sdk: flutter
