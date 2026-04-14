@@ -5,6 +5,7 @@ import '../utilidades/formateador.dart';
 import '../servicios/servicio_exportacion_pdf.dart';
 import '../servicios/servicio_seguridad.dart';
 import 'pantalla_agregar_transaccion.dart';
+import 'pantalla_sincronizacion.dart';
 
 class PantallaDashboard extends StatefulWidget {
   const PantallaDashboard({super.key});
@@ -52,8 +53,14 @@ class _EstadoPantallaDashboard extends State<PantallaDashboard> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('EcoGasto'),
+        title: const Text('ECOGasto'),
+        centerTitle: false,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.cloud_sync_outlined),
+            onPressed: _abrirSincronizacion,
+            tooltip: 'Sincronizar con la nube',
+          ),
           IconButton(
             icon: const Icon(Icons.picture_as_pdf_outlined),
             onPressed: _exportarPdf,
@@ -314,6 +321,14 @@ class _EstadoPantallaDashboard extends State<PantallaDashboard> {
   }
 
   // ── Navegación de meses ────────────────────────────────────
+
+  void _abrirSincronizacion() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const PantallaSincronizacion(),
+      ),
+    );
+  }
 
   Future<void> _exportarPdf() async {
     if (_resumen == null) return;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 import 'servicios/servicio_seguridad.dart';
 import 'vistas/pantalla_dashboard.dart';
@@ -13,6 +15,10 @@ import 'vistas/pantalla_agregar_transaccion.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('es', null);
+  // Inicializar Firebase antes de arrancar la app
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const AplicacionEcoGasto());
 }
 
@@ -161,14 +167,14 @@ class _EstadoPantallaNavegacionPrincipal
           ),
         ],
       ),
-      floatingActionButton: Container(
+      floatingActionButton: SizedBox(
         width: 35,
         height: 35,
         child: FloatingActionButton(
           onPressed: () => _abrirFormularioTransaccion(context),
           backgroundColor: colores.primary,
           foregroundColor: colores.onPrimary,
-          child: const Icon(Icons.add, size: 25,),
+          child: const Icon(Icons.add),
         ),
       ),
     );
